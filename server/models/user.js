@@ -28,13 +28,13 @@ const userSchema = mongoose.Schema({
     type: String,
     default: "",
   },
-  phone: { 
+  phone: {
     type: String,
-    default: "", 
+    default: "",
   },
-  type: {
+  token: {
     type: String,
-    default: "user",
+    default: "",
   },
   cart: [
     {

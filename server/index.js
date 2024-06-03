@@ -7,13 +7,19 @@ const productRouter = require("./routers/product");
 const userRouter = require("./routers/user");
 const couponRouter = require("./routers/coupon");
 const categoryRouter = require("./routers/category");
-const cors = require('cors');
 
 const PORT = process.env.PORT || 5000;
 const app = express();
-const DB = "mongodb+srv://tranahuy247:Q4wWikq5WMnL8yrE@cluster0.fblnm5k.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const DB = "mongodb://127.0.0.1:27017/lvtn";
 
-app.use(cors());
+const cors = require('cors');
+const corsOptions ={
+    origin:'http://localhost:3000', 
+    credentials:true,       
+    optionSuccessStatus:200
+}
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(authRouter);
 app.use(adminRouter);
