@@ -4,7 +4,9 @@ const auth = require("../middlewares/auth");
 const { Product } = require("../models/product");
 const { Category } = require("../models/category");
 
-productRouter.get("/api/products/", auth, async (req, res) => {
+
+// Endpoint lấy tất cả
+productRouter.get("/api/products", async (req, res) => {
   try {
     let query = {};
     if (req.query.category) {
@@ -17,9 +19,20 @@ productRouter.get("/api/products/", auth, async (req, res) => {
     res.status(500).json({ error: e.message });
   }
 });
+// Endpoint lấy sản phẩm theo ID
+productRouter.get("/api/products/:id", async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+    res.json(product);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
 
-// create a get request to search products and get them
-// /api/products/search/i
+ // Endpoint tìm kiếm
 productRouter.get("/api/products/search/:name", auth, async (req, res) => {
   try {
     const products = await Product.find({

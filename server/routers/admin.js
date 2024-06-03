@@ -1,12 +1,9 @@
 const express = require("express");
-const http = require("http");
-const app = express();
 const adminRouter = express.Router();
 const admin = require("../middlewares/admin");
 const { Product } = require("../models/product");
 const Order = require("../models/order");
-const { PromiseProvider } = require("mongoose");
-const io = require("socket.io")(http.createServer(app));
+
 
 // Add product
 adminRouter.post("/admin/add-product", admin, async (req, res) => {
