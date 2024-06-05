@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
-const ratingSchema = require("./rating");
+// const ratingSchema = require("./rating");
 
-const productSchema = mongoose.Schema({
+const booksSchema = mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -12,12 +12,10 @@ const productSchema = mongoose.Schema({
     required: true,
     trim: true,
   },
-  images: [
-    {
+  images: {
       type: String,
       required: true,
-    },
-  ],
+  },
   quantity: {
     type: Number,
     required: true,
@@ -30,8 +28,16 @@ const productSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Category'
   }],
-  ratings: [ratingSchema],
+  authors: {  
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Author'
+  },
+  publishers: [{  
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Publisher'
+  }],
+  // ratings: [ratingSchema],
 });
 
-const Product = mongoose.model("Product", productSchema);
-module.exports = { Product, productSchema };
+const Book = mongoose.model("Book", booksSchema);
+module.exports = { Book, booksSchema };

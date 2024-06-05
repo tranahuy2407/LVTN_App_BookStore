@@ -2,7 +2,7 @@ const express = require("express");
 const userRouter = express.Router();
 const auth = require("../middlewares/auth");
 const Order = require("../models/order");
-const { Product } = require("../models/product");
+const { Product } = require("../models/book");
 const User = require("../models/user");
 
 userRouter.post("/api/add-to-cart", auth, async (req, res) => {
@@ -75,7 +75,7 @@ userRouter.post("/api/save-user-address", auth, async (req, res) => {
 // order product
 userRouter.post("/api/order", auth, async (req, res) => {
   try {
-    const { cart, totalPrice, address, paymentMethod } = req.body; // Extract paymentMethod from request body
+    const { cart, totalPrice, address, paymentMethod } = req.body;
     let products = [];
 
     for (let i = 0; i < cart.length; i++) {
@@ -85,9 +85,7 @@ userRouter.post("/api/order", auth, async (req, res) => {
         products.push({ product, quantity: cart[i].quantity });
         await product.save();
       } else {
-        return res
-          .status(400)
-          .json({ msg: `${product.name} tạm hết hàng!` });
+        return res.status(400).json({ msg: `${product.name} tạm hết hàng!` });
       }
     }
 
@@ -101,7 +99,7 @@ userRouter.post("/api/order", auth, async (req, res) => {
       address,
       userId: req.user,
       orderedAt: new Date().getTime(),
-      paymentMethod: paymentMethod
+      paymentMethod: paymentMethod,
     });
     order = await order.save();
     res.json(order);
@@ -109,7 +107,6 @@ userRouter.post("/api/order", auth, async (req, res) => {
     res.status(500).json({ error: e.message });
   }
 });
-
 
 userRouter.get("/api/orders/me", auth, async (req, res) => {
   try {

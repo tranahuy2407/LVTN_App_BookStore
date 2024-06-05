@@ -11,6 +11,9 @@ import DashBoard from "../admin/DashBoard";
 import LoginPage from "../authencation/LoginPage";
 import SignUpPage from "../authencation/SignUpPage";
 import Cart from "../shop/Cart";
+import AccountPage from "../authencation/AccountPage";
+
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -18,7 +21,7 @@ const router = createBrowserRouter([
     children:[
         {
             path: "/",
-            element: <Home/>
+            element: <Home  />
         },
         {
             path: "/shop",
@@ -39,6 +42,14 @@ const router = createBrowserRouter([
         {
             path: "/login",
             element: <LoginPage/>
+        },
+        {
+            path: "/account",
+            element: <AccountPage/>
+        },
+        {
+            path: "/account/:subpage?",
+            element: <AccountPage/>
         },
         {
             path:"/book/:id",

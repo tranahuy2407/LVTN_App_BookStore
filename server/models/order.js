@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
-const { productSchema } = require("./product");
+const { booksSchema } = require("./book");
 
 const orderSchema = mongoose.Schema({
-  products: [
+  books: [
     {
-      product: productSchema,
+      book: booksSchema,
       quantity: {
         type: Number,
         required: true,

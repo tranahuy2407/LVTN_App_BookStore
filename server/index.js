@@ -3,10 +3,11 @@ const mongoose = require("mongoose");
 
 const adminRouter = require("./routers/admin");
 const authRouter = require("./routers/auth");
-const productRouter = require("./routers/product");
+const bookRouter = require("./routers/book");
 const userRouter = require("./routers/user");
 const couponRouter = require("./routers/coupon");
 const categoryRouter = require("./routers/category");
+
 
 const PORT = process.env.PORT || 5000;
 const app = express();
@@ -18,15 +19,15 @@ const corsOptions ={
     credentials:true,       
     optionSuccessStatus:200
 }
-
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(authRouter);
 app.use(adminRouter);
-app.use(productRouter);
+app.use(bookRouter);
 app.use(userRouter);
 app.use(couponRouter);
 app.use(categoryRouter);
+
 
 mongoose
   .connect(DB)

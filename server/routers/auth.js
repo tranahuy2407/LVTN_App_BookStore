@@ -2,10 +2,11 @@ const express = require("express");
 const bcryptjs = require("bcryptjs");
 const authRouter = express.Router();
 const jwt = require("jsonwebtoken");
-const auth = require("../middlewares/auth");
 const User = require("../models/user");
-require('dotenv').config();
+const cookieParser = require('cookie-parser');
 
+require('dotenv').config();
+authRouter.use(cookieParser());
 const jwtSecret = process.env.JWT_SECRET || "fasesaddyuasqwee16asdas2"; 
 
 // Đăng ký
@@ -48,7 +49,10 @@ authRouter.post("/api/signin", async (req, res) => {
       return res.status(400).json({ msg: "Mật khẩu không đúng!" });
     }
 
-    jwt.sign({ email: user.email, id: user._id }, jwtSecret, {}, async (err, token) => {
+    jwt.sign({ 
+      email: user.email, 
+      id: user._id, 
+     }, jwtSecret, {}, async (err, token) => {
       if (err) {
         console.error("JWT error:", err);
         return res.status(500).json({ error: "JWT error" });
@@ -79,14 +83,25 @@ authRouter.post("/tokenIsValid", async (req, res) => {
   }
 });
 
-// Lấy dữ liệu người dùng
-authRouter.get("/", auth, async (req, res) => {
-  try {
-    const user = await User.findById(req.user);
-    res.json({ ...user._doc, token: req.token });
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
+
+//Lấy thông tin profile
+authRouter.get("/api/profile", (req, res) => {
+    const {token} = req.cookies;
+    if(token){
+        jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+          if(err) throw err;
+           const {email, name, phone, _id} = await User.findById(userData.id);
+            res.json(email, name, phone, _id);
+        });
+    }else{
+      res.json(null);
+    } 
 });
+
+// Đăng xuất
+authRouter.post("/logout", (req, res) => {
+  res.cookie('token', '').json({ success: true });
+});
+
 
 module.exports = authRouter;

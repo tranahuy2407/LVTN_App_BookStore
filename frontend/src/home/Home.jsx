@@ -5,7 +5,6 @@ import FavBook from './FavBook'
 import PromotionBanner from './PromotionBanner'
 import OrtherBook from './OrtherBook'
 import Review from './Review'
-import Footerr from '../components/Footerr'
 const Home = () => {
   return (
     <div>

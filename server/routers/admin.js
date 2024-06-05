@@ -1,9 +1,8 @@
 const express = require("express");
 const adminRouter = express.Router();
 const admin = require("../middlewares/admin");
-const { Product } = require("../models/product");
+const { Product } = require("../models/book");
 const Order = require("../models/order");
-
 
 // Add product
 adminRouter.post("/admin/add-product", admin, async (req, res) => {
@@ -80,7 +79,7 @@ adminRouter.get("/admin/analytics", admin, async (req, res) => {
     }
 
     let categoryEarnings = {};
-    
+
     // Fetch earnings for each category
     for (let category of categories) {
       let categoryEarning = await fetchCategoryWiseProduct(category.name);
