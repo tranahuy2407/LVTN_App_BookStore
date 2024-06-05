@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { CartContext } from './CartContext';
-
+import { useNavigate } from 'react-router-dom';
+import empty from "../assets/empty.png"
 const Cart = () => {
   const { cartItems, removeFromCart, increaseQuantity, decreaseQuantity } = useContext(CartContext);
   console.log(cartItems);
@@ -8,11 +9,21 @@ const Cart = () => {
   const totalQuantity = cartItems.reduce((total, item) => total + item.cartQuantity, 0);
   const totalPrice = cartItems.reduce((total, item) => total + item.price * item.cartQuantity, 0);
 
+  const navigate = useNavigate();
+
+  function continueShopping() {
+    navigate('/shop');
+  }
+
   return (
     <div className='mt-28 px-4 lg:px-24'>
-      <h2 className='text-5xl font-bold text-center'>Giỏ hàng</h2>
+      <h2 className='text-5xl font-bold text-center '>Giỏ hàng</h2>
       {cartItems.length === 0 ? (
-        <p className='text-center text-2xl'>Giỏ hàng của bạn đang trống.</p>
+        <div className="text-center mt-12">
+         <img src={empty} alt="Empty Cart" className="mx-auto w-64 h-64 mb-12" />
+          <p className='text-4xl'>Giỏ hàng của bạn đang trống.</p>
+          <button className='bg-blue-500 text-white font-semibold py-4 px-8 rounded mt-8' onClick={continueShopping}>Tiếp tục mua sách</button>
+        </div>
       ) : (
         <div className='my-12'>
           <table className='w-full'>
@@ -59,7 +70,7 @@ const Cart = () => {
               <p className='text-xl font-semibold'>Thành tiền: {totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p>
             </div>
             <div>
-              <button className='bg-blue-500 text-white font-semibold py-2 px-4 rounded mr-4'>Tiếp tục mua sách</button>
+              <button className='bg-blue-500 text-white font-semibold py-2 px-4 rounded mr-4' onClick={continueShopping}>Tiếp tục mua sách</button>
               <button className='bg-green-500 text-white font-semibold py-2 px-4 rounded'>Thanh toán</button>
             </div>
           </div>

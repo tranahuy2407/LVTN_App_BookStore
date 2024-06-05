@@ -4,7 +4,6 @@ const authRouter = express.Router();
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const cookieParser = require('cookie-parser');
-
 require('dotenv').config();
 authRouter.use(cookieParser());
 const jwtSecret = process.env.JWT_SECRET || "fasesaddyuasqwee16asdas2"; 
@@ -103,5 +102,27 @@ authRouter.post("/logout", (req, res) => {
   res.cookie('token', '').json({ success: true });
 });
 
+// Cập nhật thông tin hồ sơ
+authRouter.post("/api/updateProfile", async (req, res) => {
+  try {
+    const { name, phone, email, address } = req.body;
+    const token = req.cookies.token;
+    if (!token) {
+      return res.status(401).json({ error: "Không tìm thấy token, vui lòng đăng nhập lại" });
+    }
+    // Xác thực token
+    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+      if (err) {
+        return res.status(401).json({ error: "Token không hợp lệ, vui lòng đăng nhập lại" });
+      }
+      const userId = userData.id;
+      const updatedUser = await User.findByIdAndUpdate(userId, { name, phone, email, address }, { new: true });
+      res.status(200).json({ success: true, user: updatedUser });
+    });
+  } catch (error) {
+    console.error("Cập nhật thông tin hồ sơ:", error.message);
+    res.status(500).json({ error: "Đã xảy ra lỗi khi cập nhật thông tin hồ sơ" });
+  }
+});
 
 module.exports = authRouter;

@@ -14,17 +14,22 @@ export const CartProvider = ({ children }) => {
 
   const addToCart = (item) => {
     setCartItems((prevItems) => {
-      const existingItem = prevItems.find(cartItem => cartItem.id === item.id && cartItem.name === item.name);
-      if (existingItem) {
-        return prevItems.map((cartItem) =>
-          cartItem.id === item.id ? { ...cartItem, cartQuantity: cartItem.cartQuantity + 1 } : cartItem
-        );
+      const existingItemIndex = prevItems.findIndex(
+        (cartItem) => cartItem.id === item.id && cartItem.name === item.name
+      );
+  
+      if (existingItemIndex !== -1) {
+        const updatedItems = [...prevItems];
+        updatedItems[existingItemIndex] = {
+          ...updatedItems[existingItemIndex],
+          cartQuantity: updatedItems[existingItemIndex].cartQuantity + 1,
+        };
+        return updatedItems;
       } else {
         return [...prevItems, { ...item, cartQuantity: 1, cartId: Date.now() }];
       }
     });
   };
-
   const removeFromCart = (cartId) => {
     setCartItems((prevItems) => prevItems.filter(item => item.cartId !== cartId));
   };
