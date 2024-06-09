@@ -19,10 +19,10 @@ const orderSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  userId: {
-    required: true,
-    type: String,
-  },
+  userId: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'User', 
+    required: true },
   orderedAt: {
     type: Number,
     required: true,
@@ -33,6 +33,10 @@ const orderSchema = mongoose.Schema({
   },
   paymentMethod: {
     type: String,
+    required: true,
+  },
+  phone: {
+    type: Number,
     required: true,
   },
 });

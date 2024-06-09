@@ -48,7 +48,6 @@ const AccountPage = () => {
     e.preventDefault();
     try {
       const response = await axios.post('http://localhost:5000/api/updateProfile', formData);
-      // console.log(response);
       setUser(response.data.user); 
       setEditing(false);
     } catch (error) {

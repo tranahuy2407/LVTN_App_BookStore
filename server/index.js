@@ -5,7 +5,6 @@ const adminRouter = require("./routers/admin");
 const authRouter = require("./routers/auth");
 const bookRouter = require("./routers/book");
 const userRouter = require("./routers/user");
-const couponRouter = require("./routers/coupon");
 const categoryRouter = require("./routers/category");
 
 
@@ -25,7 +24,6 @@ app.use(authRouter);
 app.use(adminRouter);
 app.use(bookRouter);
 app.use(userRouter);
-app.use(couponRouter);
 app.use(categoryRouter);
 
 

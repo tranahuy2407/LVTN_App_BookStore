@@ -2,117 +2,91 @@ const express = require("express");
 const userRouter = express.Router();
 const auth = require("../middlewares/auth");
 const Order = require("../models/order");
-const { Product } = require("../models/book");
+const Promotion = require("../models/promotion");
+const { Book } = require("../models/book");
 const User = require("../models/user");
 
-userRouter.post("/api/add-to-cart", auth, async (req, res) => {
+//Nhập giảm giá
+userRouter.post('/apply-promotion', async (req, res) => {
   try {
-    const { id } = req.body;
-    const product = await Product.findById(id);
-    let user = await User.findById(req.user);
-
-    if (user.cart.length == 0) {
-      user.cart.push({ product, quantity: 1 });
-    } else {
-      let isProductFound = false;
-      for (let i = 0; i < user.cart.length; i++) {
-        if (user.cart[i].product._id.equals(product._id)) {
-          isProductFound = true;
-        }
-      }
-
-      if (isProductFound) {
-        let producttt = user.cart.find((productt) =>
-          productt.product._id.equals(product._id)
-        );
-        producttt.quantity += 1;
-      } else {
-        user.cart.push({ product, quantity: 1 });
-      }
+    const { code } = req.body;
+    const promotion = await Promotion.findOne({ code });
+    if (!promotion) {
+      return res.status(404).json({ message: 'Mã giảm giá không hợp lệ.' });
     }
-    user = await user.save();
-    res.json(user);
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
-});
-
-userRouter.delete("/api/remove-from-cart/:id", auth, async (req, res) => {
-  try {
-    const { id } = req.params;
-    const product = await Product.findById(id);
-    let user = await User.findById(req.user);
-
-    for (let i = 0; i < user.cart.length; i++) {
-      if (user.cart[i].product._id.equals(product._id)) {
-        if (user.cart[i].quantity == 1) {
-          user.cart.splice(i, 1);
-        } else {
-          user.cart[i].quantity -= 1;
-        }
-      }
+    const currentDate = new Date();
+    if (currentDate < promotion.start_day || currentDate > promotion.end_day) {
+      return res.status(400).json({ message: 'Mã giảm giá đã hết hạn.' });
     }
-    user = await user.save();
-    res.json(user);
-  } catch (e) {
-    res.status(500).json({ error: e.message });
+    if (promotion.usage_per_user.length >= promotion.limit) {
+      return res.status(400).json({ msg: 'Mã giảm giá đã được sử dụng hết!' });
+    }
+    if (promotion.usage_per_user.includes(req.user)) {
+      return res.status(400).json({ msg: 'Bạn đã sử dụng mã giảm giá này rồi!' });
+    }
+    return res.status(200).json({ message: 'Mã giảm giá đã được áp dụng thành công.', promotion });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Đã xảy ra lỗi khi áp dụng mã giảm giá.' });
   }
 });
 
-// save user address
-userRouter.post("/api/save-user-address", auth, async (req, res) => {
+userRouter.post('/api/order', async (req, res) => {
   try {
-    const { address } = req.body;
-    let user = await User.findById(req.user);
-    user.address = address;
-    user = await user.save();
-    res.json(user);
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
-});
-
-// order product
-userRouter.post("/api/order", auth, async (req, res) => {
-  try {
-    const { cart, totalPrice, address, paymentMethod } = req.body;
+    const { cart, totalPrice, address, paymentMethod, discountCode, discountedPrice, phone,userId } = req.body;
     let products = [];
 
-    for (let i = 0; i < cart.length; i++) {
-      let product = await Product.findById(cart[i].product._id);
-      if (product.quantity >= cart[i].quantity) {
-        product.quantity -= cart[i].quantity;
-        products.push({ product, quantity: cart[i].quantity });
+    for (let item of cart) {
+      if (!item.book || !item.book._id) {
+        return res.status(400).json({ msg: 'Dữ liệu sản phẩm không hợp lệ.' });
+      }
+
+      let product = await Book.findById(item.book._id);
+      if (!product) {
+        return res.status(404).json({ msg: 'Sản phẩm không tồn tại.' });
+      }
+
+      if (product.quantity >= item.quantity) {
+        product.quantity -= item.quantity;
+        products.push({ product, quantity: item.quantity });
         await product.save();
       } else {
         return res.status(400).json({ msg: `${product.name} tạm hết hàng!` });
       }
     }
-
-    let user = await User.findById(req.user);
-    user.cart = [];
-    user = await user.save();
-
-    let order = new Order({
-      products,
-      totalPrice,
+console.log(cart)
+    if (discountCode) {
+      const promotion = await Promotion.findOne({ code: discountCode });
+      if (promotion) {
+        promotion.usage_per_user.push(userId);
+        await promotion.save();
+      }
+    }
+    const order = new Order({
+      books: cart,
+      totalPrice: discountedPrice || totalPrice,
       address,
-      userId: req.user,
+      userId: userId,
       orderedAt: new Date().getTime(),
-      paymentMethod: paymentMethod,
+      paymentMethod,
+      phone,
     });
-    order = await order.save();
-    res.json(order);
+    await order.save();
+
+    res.status(201).json(order);
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    console.error('Order creation error:', e);
+    res.status(500).json({ error: 'Đã xảy ra lỗi trong quá trình đặt hàng.' });
   }
 });
+
 
 userRouter.get("/api/orders/me", auth, async (req, res) => {
   try {
     const orders = await Order.find({ userId: req.user });
     res.json(orders);
   } catch (e) {
+    console.error("Error processing order:", e);  
     res.status(500).json({ error: e.message });
   }
 });

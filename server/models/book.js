@@ -32,10 +32,10 @@ const booksSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Author'
   },
-  publishers: [{  
+  publishers: {  
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Publisher'
-  }],
+  },
   // ratings: [ratingSchema],
 });
 

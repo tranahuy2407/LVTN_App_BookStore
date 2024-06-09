@@ -12,6 +12,8 @@ import LoginPage from "../authencation/LoginPage";
 import SignUpPage from "../authencation/SignUpPage";
 import Cart from "../shop/Cart";
 import AccountPage from "../authencation/AccountPage";
+import Checkout from "../shop/Checkout";
+import Invoice from "../shop/Invoice";
 
 
 const router = createBrowserRouter([
@@ -63,6 +65,14 @@ const router = createBrowserRouter([
         {
             path:"/cart",
             element: <Cart/>
+        },
+        {
+            path:"/checkout",
+            element: <Checkout/>
+        },
+        {
+            path:"/invoice",
+            element: <Invoice/>
         },
         {
             path:"/admin/dashboard",
