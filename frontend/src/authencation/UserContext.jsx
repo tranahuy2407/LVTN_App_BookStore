@@ -22,6 +22,8 @@ export function UserContextProvider({ children }) {
                 setReady(true);
             });
         }
+
+
     }, []);
 
     const updateUser = (userData) => {
@@ -33,6 +35,7 @@ export function UserContextProvider({ children }) {
         setUser(null);
         localStorage.removeItem('user');
     };
+    
 
     return (
         <UserContext.Provider value={{ user, setUser: updateUser, clearUser, ready }}>

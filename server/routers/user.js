@@ -9,7 +9,8 @@ const User = require("../models/user");
 //Nhập giảm giá
 userRouter.post('/apply-promotion', async (req, res) => {
   try {
-    const { code } = req.body;
+    const { code, totalPrice, userId } = req.body;
+    console.log(code,totalPrice, userId);
     const promotion = await Promotion.findOne({ code });
     if (!promotion) {
       return res.status(404).json({ message: 'Mã giảm giá không hợp lệ.' });
@@ -21,9 +22,20 @@ userRouter.post('/apply-promotion', async (req, res) => {
     if (promotion.usage_per_user.length >= promotion.limit) {
       return res.status(400).json({ msg: 'Mã giảm giá đã được sử dụng hết!' });
     }
-    if (promotion.usage_per_user.includes(req.user)) {
+    if (promotion.usage_per_user.includes(userId)) {
       return res.status(400).json({ msg: 'Bạn đã sử dụng mã giảm giá này rồi!' });
     }
+    if (totalPrice < promotion.conditional) {
+      const formatter = new Intl.NumberFormat('vi-VN', {
+        style: 'currency',
+        currency: 'VND',
+      });
+
+      const formattedConditional = formatter.format(promotion.conditional);
+
+      return res.status(400).json({ message: `Tổng giá phải lớn hơn hoặc bằng ${formattedConditional} để áp dụng mã giảm giá.` });
+    }
+
     return res.status(200).json({ message: 'Mã giảm giá đã được áp dụng thành công.', promotion });
   } catch (error) {
     console.error(error);
@@ -54,11 +66,12 @@ userRouter.post('/api/order', async (req, res) => {
         return res.status(400).json({ msg: `${product.name} tạm hết hàng!` });
       }
     }
-console.log(cart)
+
     if (discountCode) {
       const promotion = await Promotion.findOne({ code: discountCode });
       if (promotion) {
         promotion.usage_per_user.push(userId);
+        promotion.limit -= 1;
         await promotion.save();
       }
     }

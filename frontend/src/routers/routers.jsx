@@ -77,11 +77,12 @@ const router = createBrowserRouter([
         {
             path:"/admin/dashboard",
             element: <DashBoardLayout/>,
-            children: [
+            children: [ 
                 {
                     path:"/admin/dashboard",
                     element: <DashBoard/>
                 },
+               
             ]
         }
     ]

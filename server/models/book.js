@@ -24,6 +24,13 @@ const booksSchema = mongoose.Schema({
     type: Number,
     required: true,
   },
+  promotion_price: {
+    type: Number,
+    required: true,
+    default: function() {
+      return this.price; 
+    }
+  },
   categories: [{  
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Category'
