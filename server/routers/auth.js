@@ -44,7 +44,6 @@ authRouter.post("/api/signin", async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({ msg: "Mật khẩu không đúng!" });
     }
-
     jwt.sign({ 
       email: user.email, 
       id: user._id, 
@@ -53,7 +52,6 @@ authRouter.post("/api/signin", async (req, res) => {
         console.error("JWT error:", err);
         return res.status(500).json({ error: "JWT error" });
       }
-
       user.token = token;
       await user.save();
       res.cookie('token', token).json(user);

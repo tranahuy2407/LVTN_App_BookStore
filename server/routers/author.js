@@ -15,5 +15,4 @@ authorRouter.get("/author/:id", async (req, res) => {
     }
   });
 
-
 module.exports = authorRouter;

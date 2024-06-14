@@ -1,11 +1,8 @@
 import React, { useContext, useState, useEffect } from "react";
-import VNpay from "../assets/vnpay_logo.jpg";
-import ZaloPay from "../assets/ZaloPay_Logo.jpg";
-import Cash from "../assets/Cash_Logo.jpg";
-import MoMo from "../assets/MoMo_Logo.png";
 import { CartContext } from "./CartContext";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../authencation/UserContext";
+import PaymentMethods from "./PaymentMethods";
 
 const Checkout = () => {
   const {
@@ -55,10 +52,12 @@ const Checkout = () => {
   }, []);
 
   const handleProvinceChange = (e) => {
-    const selectedProvinceId = e.target.value;
-    setProvince(selectedProvinceId);
+    const selectedProvince = provinces.find(
+      (province) => province.full_name === e.target.value
+    );
+    setProvince(selectedProvince);
 
-    fetch(`https://esgoo.net/api-tinhthanh/2/${selectedProvinceId}.htm`)
+    fetch(`https://esgoo.net/api-tinhthanh/2/${selectedProvince.id}.htm`)
       .then((response) => response.json())
       .then((data) => {
         if (data.error === 0) {
@@ -73,10 +72,12 @@ const Checkout = () => {
       });
   };
   const handleDistrictChange = (e) => {
-    const selectedDistrictId = e.target.value;
-    setDistrict(selectedDistrictId);
+    const selectedDistrict = districts.find(
+      (district) => district.full_name === e.target.value
+    );
+    setDistrict(selectedDistrict);
 
-    fetch(`https://esgoo.net/api-tinhthanh/3/${selectedDistrictId}.htm`)
+    fetch(`https://esgoo.net/api-tinhthanh/3/${selectedDistrict.id}.htm`)
       .then((response) => response.json())
       .then((data) => {
         if (data.error === 0) {
@@ -131,7 +132,7 @@ const Checkout = () => {
           quantity: item.cartQuantity,
         })),
         totalPrice: finalPrice,
-        address: `${address}, ${ward}, ${district}, ${province}`,
+        address: `${address}, ${ward}, ${district.full_name}, ${province.full_name}`,
         paymentMethod,
         discountCode: discountCode ? discountCode.code : null,
         phone,
@@ -209,14 +210,14 @@ const Checkout = () => {
                   <select
                     id="province"
                     name="province"
-                    value={province.name}
+                    value={province.full_name}
                     onChange={handleProvinceChange}
                     className="mt-1 block w-full rounded border-gray-300 bg-gray-50 py-3 px-4 text-sm placeholder-gray-300 shadow-sm outline-none transition focus:ring-2 focus:ring-teal-500"
                     required
                   >
                     <option value="">Chọn tỉnh/thành phố</option>
                     {provinces.map((province) => (
-                      <option key={province.id} value={province.id}>
+                      <option key={province.id} value={province.full_name}>
                         {province.full_name}
                       </option>
                     ))}
@@ -232,14 +233,14 @@ const Checkout = () => {
                   <select
                     id="district"
                     name="district"
-                    value={district.name}
+                    value={district.full_name}
                     onChange={handleDistrictChange}
                     className="mt-1 block w-full rounded border-gray-300 bg-gray-50 py-3 px-4 text-sm placeholder-gray-300 shadow-sm outline-none transition focus:ring-2 focus:ring-teal-500"
                     required
                   >
                     <option value="">Chọn quận/huyện</option>
                     {districts.map((district) => (
-                      <option key={district.id} value={district.id}>
+                      <option key={district.id} value={district.full_name}>
                         {district.full_name}
                       </option>
                     ))}
@@ -287,93 +288,10 @@ const Checkout = () => {
                   />
                 </div>
               </div>
-              <div className="col-span-3">
-                <p className="text-xs font-semibold text-gray-500">
-                  Phương thức thanh toán
-                </p>
-                <div className="mt-2 grid grid-cols-2 gap-4">
-                  <div className="flex items-center">
-                    <input
-                      type="radio"
-                      id="cod"
-                      name="paymentMethod"
-                      value="cod"
-                      className="h-4 w-4 text-teal-600 focus:ring-teal-500 border-gray-300"
-                      checked={paymentMethod === "cod"}
-                      onChange={(e) => setPaymentMethod(e.target.value)}
-                      required
-                    />
-                    <label
-                      htmlFor="cod"
-                      className="ml-2 block text-sm font-medium text-gray-700"
-                    >
-                      Thanh toán khi nhận hàng
-                    </label>
-                    <img src={Cash} alt="Cash Logo" className="h-12 w-12" />
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="radio"
-                      id="zalopay"
-                      name="paymentMethod"
-                      value="zalopay"
-                      className="h-4 w-4 text-teal-600 focus:ring-teal-500 border-gray-300"
-                      checked={paymentMethod === "zalopay"}
-                      onChange={(e) => setPaymentMethod(e.target.value)}
-                      required
-                    />
-                    <label
-                      htmlFor="zalopay"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Thanh toán ZaloPay
-                    </label>
-                    <img
-                      src={ZaloPay}
-                      alt="ZaloPay Logo"
-                      className="h-12 w-12"
-                    />
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="radio"
-                      id="vnpay"
-                      name="paymentMethod"
-                      value="vnpay"
-                      className="h-4 w-4 text-teal-600 focus:ring-teal-500 border-gray-300"
-                      checked={paymentMethod === "vnpay"}
-                      onChange={(e) => setPaymentMethod(e.target.value)}
-                      required
-                    />
-                    <label
-                      htmlFor="vnpay"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Thanh toán VNPay
-                    </label>
-                    <img src={VNpay} alt="VNPay Logo" className="h-12 w-12" />
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="radio"
-                      id="momo"
-                      name="paymentMethod"
-                      value="momo"
-                      className="h-4 w-4 text-teal-600 focus:ring-teal-500 border-gray-300"
-                      checked={paymentMethod === "momo"}
-                      onChange={(e) => setPaymentMethod(e.target.value)}
-                      required
-                    />
-                    <label
-                      htmlFor="momo"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Thanh toán MoMo
-                    </label>
-                    <img src={MoMo} alt="MoMo Logo" className="h-12 w-12" />
-                  </div>
-                </div>
-              </div>
+              <PaymentMethods
+                paymentMethod={paymentMethod}
+                setPaymentMethod={setPaymentMethod}
+              />
               <button
                 type="submit"
                 className="mt-4 inline-flex w-full items-center justify-center rounded bg-teal-600 py-2.5 px-4 text-base font-semibold tracking-wide text-white text-opacity-80 outline-none ring-offset-2 transition hover:text-opacity-100 focus:ring-2 focus:ring-teal-500 sm:text-lg"

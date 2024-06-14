@@ -17,15 +17,15 @@ export function UserContextProvider({ children }) {
             axios.get('http://localhost:5000/api/profile').then(({ data }) => {
                 setUser(data);
                 localStorage.setItem('user', JSON.stringify(data));
+              
                 setReady(true);
             }).catch(() => {
                 setReady(true);
             });
         }
 
-
     }, []);
-
+    console.log(user)
     const updateUser = (userData) => {
         setUser(userData);
         localStorage.setItem('user', JSON.stringify(userData));
