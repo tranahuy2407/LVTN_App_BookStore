@@ -45,24 +45,16 @@ favouriteRouter.get("/favorite/:userId", async (req, res) => {
   // XÓa khỏi ds têu thích
   favouriteRouter.delete("/remove-favorite", async (req, res) => {
     const { userId, bookId } = req.body; 
-    console.log("UserID:", userId, "BookID:", bookId); // Debugging log
+    console.log("UserID:", userId, "BookID:", bookId);
 
     try {
-        // Find the user's favorite list
         let favourite = await Favourite.findOne({ userId });
         
-        // Check if the favourite list exists and if the bookId is in the list
         if (!favourite || !favourite.bookIds.includes(bookId)) {
             return res.status(404).json({ message: "Favorite not found" });
         }
-
-        // Remove the bookId from the user's favorite list
         favourite.bookIds = favourite.bookIds.filter(id => id.toString() !== bookId);
-        
-        // Save the updated document
         await favourite.save();
-
-        // If the favorite list is empty after removal, delete the document
         if (favourite.bookIds.length === 0) {
             await Favourite.findOneAndDelete({ userId });
             return res.json({ message: "Favorite list deleted successfully" });
