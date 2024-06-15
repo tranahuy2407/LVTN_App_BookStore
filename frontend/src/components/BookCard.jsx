@@ -3,7 +3,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import { Pagination } from 'swiper/modules';
-
+import { Link } from 'react-router-dom';
 import { FaCartShopping } from 'react-icons/fa6';
 
 const BookCard = ({ headline, books }) => {

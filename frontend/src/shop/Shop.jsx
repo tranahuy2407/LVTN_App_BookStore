@@ -18,38 +18,37 @@ const Shop = () => {
   const { addToCart } = useContext(CartContext);
   const [favorites, setFavorites] = useState([]);
   const { user } = useContext(UserContext);
-  console.log(user)
+
+  // Fetch books, categories, and authors
   useEffect(() => {
-    fetch("http://localhost:5000/api/products")
-      .then(res => res.json())
-      .then(data => setBooks(data));
+    const fetchData = async () => {
+      try {
+        const booksResponse = await axios.get("http://localhost:5000/api/products");
+        setBooks(booksResponse.data);
 
-    fetch("http://localhost:5000/api/categories")
-      .then(res => res.json())
-      .then(data => setCategories(data));
+        const categoriesResponse = await axios.get("http://localhost:5000/api/categories");
+        setCategories(categoriesResponse.data);
 
-    fetch("http://localhost:5000/api/authors")
-      .then(res => res.json())
-      .then(data => setAuthors(data));
+        const authorsResponse = await axios.get("http://localhost:5000/api/authors");
+        setAuthors(authorsResponse.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
   }, []);
 
+  // Fetch author names for books
   useEffect(() => {
     const fetchAuthors = async () => {
       const fetchedAuthors = {};
       for (const book of books) {
         if (book.author) {
           try {
-            const response = await fetch(`http://localhost:5000/author/${book.author}`);
-  
-            if (response.ok) {
-              const data = await response.json();
-              fetchedAuthors[book.author] = data.name;
-      
-            } else {
-              fetchedAuthors[book.author] = 'Unknown Author';
-            }
+            const response = await axios.get(`http://localhost:5000/author/${book.author}`);
+            fetchedAuthors[book.author] = response.data.name || 'Unknown Author';
           } catch (error) {
-            console.error("Lỗi:", error);
+            console.error("Error fetching author data:", error);
             fetchedAuthors[book.author] = 'Unknown Author';
           }
         } else {
@@ -59,7 +58,9 @@ const Shop = () => {
       setAuthorNames(fetchedAuthors);
     };
 
-    fetchAuthors();
+    if (books.length > 0) {
+      fetchAuthors();
+    }
   }, [books]);
 
   const handlePriceFilterChange = (event) => {
@@ -79,35 +80,25 @@ const Shop = () => {
       checked ? [...prev, value] : prev.filter(author => author !== value)
     );
   };
-
-  const toggleFavorite = (bookId) => {
+  const toggleFavorite = async (bookId) => {
     const isCurrentlyFavorite = favorites.includes(bookId);
     const url = isCurrentlyFavorite ? 'http://localhost:5000/remove-favorite' : 'http://localhost:5000/add-favorite';
     
-    const method = isCurrentlyFavorite ? 'delete' : 'post';
-  
-    axios({
-      method: method,
-      url: url,
-      data: {
-        userId: user._id,   
-        bookId: bookId
-      }
-    })
-      .then(() => {
+    try {
         if (isCurrentlyFavorite) {
-          setFavorites(favorites.filter(id => id !== bookId));
+            // Ensure the userId and bookId are correctly sent in the body
+            const response = await axios.delete(url, { data: { userId: user._id, bookId } });
+            setFavorites(favorites.filter(id => id !== bookId));
         } else {
-          setFavorites([...favorites, bookId]);
+            const response = await axios.post(url, { userId: user._id, bookId });
+            setFavorites([...favorites, bookId]);
         }
-      })
-      .catch(error => console.error(`Error ${method === 'post' ? 'adding' : 'removing'} favorite:`, error));
-  };
-  
+    } catch (error) {
+        console.error("Error toggling favorite:", error);
+    }
+};
 
-  const isFavorite = (bookId) => {
-    return favorites.includes(bookId);
-  };
+  const isFavorite = (bookId) => favorites.includes(bookId);
 
   const filteredBooks = books.filter(book => {
     let priceCondition = true;
@@ -202,7 +193,7 @@ const Shop = () => {
                       -{book.promotion_percent}%
                     </div>
                   )}
-                  <img src={book.images} alt={book.name} className="rounded-t-lg h-64 sm:h-72 object-contain"/>
+                  <img src={book.images} alt={book                  .name} className="rounded-t-lg h-64 sm:h-72 object-contain"/>
                   <img
                     src={isFavorite(book._id) ? RedHeartIcon : GrayHeartIcon}
                     className="absolute top-2 right-2 h-6 w-6 cursor-pointer"
@@ -244,3 +235,4 @@ const Shop = () => {
 }
 
 export default Shop;
+

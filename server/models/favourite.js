@@ -11,11 +11,11 @@ try {
         ref: 'User', 
         required: true
     },
-    bookId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Book', 
-        required: true
-    }
+    bookIds: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Book', 
+      required: true
+  }]
   });
 
   Favourite = mongoose.model("Favourite", favouritesSchema);
