@@ -2,17 +2,22 @@ const express = require("express");
 const favouriteRouter = express.Router();
 const Favourite = require("../models/favourite");
 
-// GET all favorites of a user
+//DS yêu thích cảu user qua ID
 favouriteRouter.get("/favorite/:userId", async (req, res) => {
     try {
-      const userId = req.params.userId;
-      const favorites = await Favorite.find({ userId }).populate("bookId");
-      res.json(favorites);
+        const userId = req.params.userId;
+        const favorite = await Favourite.findOne({ userId }).populate("bookIds");
+        
+        if (!favorite) {
+            return res.json([]);
+        }
+        res.json(favorite.bookIds.map(book => book._id));
     } catch (error) {
-      res.status(500).json({ message: error.message });
+        console.error("Error fetching favorites:", error);
+        res.status(500).json({ message: error.message });
     }
-  });
-  
+});
+
   // Thêm vào yêu thích
   favouriteRouter.post("/add-favorite", async (req, res) => {
     const { userId, bookId } = req.body;

@@ -19,7 +19,6 @@ const Shop = () => {
   const [favorites, setFavorites] = useState([]);
   const { user } = useContext(UserContext);
 
-  // Fetch books, categories, and authors
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -38,7 +37,21 @@ const Shop = () => {
     fetchData();
   }, []);
 
-  // Fetch author names for books
+  useEffect(() => {
+    if (user && user._id) {
+      const fetchFavorites = async () => {
+        try {
+          const response = await axios.get(`http://localhost:5000/favorite/${user._id}`);
+          setFavorites(response.data);
+          console.log(response.data)
+        } catch (error) {
+          console.error("Error fetching favorites:", error);
+        }
+      };
+      fetchFavorites();
+    }
+  }, [user]);
+
   useEffect(() => {
     const fetchAuthors = async () => {
       const fetchedAuthors = {};
@@ -86,7 +99,6 @@ const Shop = () => {
     
     try {
         if (isCurrentlyFavorite) {
-            // Ensure the userId and bookId are correctly sent in the body
             const response = await axios.delete(url, { data: { userId: user._id, bookId } });
             setFavorites(favorites.filter(id => id !== bookId));
         } else {
