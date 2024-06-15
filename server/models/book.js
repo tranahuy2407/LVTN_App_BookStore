@@ -20,6 +20,10 @@ const booksSchema = mongoose.Schema({
     type: Number,
     required: true,
   },
+  promotion_percent: {
+    type: Number,
+    required: true,
+  },
   price: {
     type: Number,
     required: true,

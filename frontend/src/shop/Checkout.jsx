@@ -26,6 +26,7 @@ const Checkout = () => {
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [wards, setWards] = useState([]);
+  const [gift, setGift] = useState(null);
 
   useEffect(() => {
     if (user) {
@@ -95,6 +96,23 @@ const Checkout = () => {
     setWard(e.target.value);
   };
 
+  useEffect(() => {
+    fetch(`http://localhost:5000/check-gift?finalPrice=${finalPrice}`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.gift) {
+          setGift(data.gift);
+        } else {
+          setGift(null);
+        }
+      })
+      .catch((error) => {
+        console.error("Lỗi khi kiểm tra quà tặng:", error);
+        setErrorMessage("Đã xảy ra lỗi khi kiểm tra quà tặng.");
+      });
+  }, [finalPrice]);
+  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -137,6 +155,7 @@ const Checkout = () => {
         discountCode: discountCode ? discountCode.code : null,
         phone,
         userId: userId,
+        gift: gift ? gift.gift : null,
       }),
     });
 
@@ -304,6 +323,12 @@ const Checkout = () => {
                 {errorMessage}
               </p>
             )}
+            {gift && (
+              <p className="mt-4 text-center text-sm font-semibold text-green-500">
+                Bạn nhận được quà tặng: {gift.gifts}
+              </p>
+            )}
+
             <p className="mt-10 text-center text-sm font-semibold text-gray-500">
               Đặt đơn hàng nếu như bạn đồng ý{" "}
               <a
@@ -325,30 +350,49 @@ const Checkout = () => {
             <div className="absolute inset-0 h-full w-full bg-gradient-to-t from-teal-800 to-teal-400 opacity-95"></div>
           </div>
           <div className="relative">
-            <ul className="space-y-5">
-              {cartItems.map((item, index) => (
-                <li key={index} className="flex justify-between">
-                  <div className="inline-flex">
-                    <img
-                      src={item.images}
-                      alt={item.name}
-                      className="max-h-16"
-                    />
-                    <div className="ml-3">
-                      <p className="text-base font-semibold text-white">
-                        {item.name}
-                      </p>
-                      <p className="text-sm font-medium text-white text-opacity-80">
-                        Số lượng: {item.cartQuantity}
-                      </p>
-                    </div>
-                  </div>
-                  <p className="text-sm font-semibold text-white">
-                    {item.price} VNĐ
+                  <ul className="space-y-5">
+          {cartItems.map((item, index) => (
+            <li key={index} className="flex justify-between">
+              <div className="inline-flex">
+                <img
+                  src={item.images}
+                  alt={item.name}
+                  className="max-h-16"
+                />
+                <div className="ml-3">
+                  <p className="text-base font-semibold text-white">
+                    {item.name}
                   </p>
-                </li>
-              ))}
-            </ul>
+                  <p className="text-sm font-medium text-white text-opacity-80">
+                    Số lượng: {item.cartQuantity}
+                  </p>
+                </div>
+              </div>
+              <p className="text-sm font-semibold text-white">
+                {item.promotion_price} VNĐ
+              </p>
+            </li>
+          ))}
+          {gift && (
+            <li className="flex justify-between">
+              <div className="inline-flex">
+                <img
+                  src={gift.image}
+                  alt={gift.gifts}
+                  className="max-h-16"
+                />
+                <div className="ml-3">
+                  <p className="text-base font-semibold text-white">
+                    Quà tặng: {gift.gifts}
+                  </p>
+                </div>
+              </div>
+              <p className="text-sm font-semibold text-white">
+                Miễn phí
+              </p>
+            </li>
+          )}
+        </ul>
             <div className="my-5 h-0.5 w-full bg-white bg-opacity-30"></div>
             <div className="space-y-2">
               <p className="flex justify-between text-lg font-bold text-white">
@@ -368,7 +412,9 @@ const Checkout = () => {
                 <span>{finalPrice} VNĐ</span>
               </p>
             </div>
+            
           </div>
+          
           <div className="relative mt-10 text-white">
             <h3 className="mb-5 text-lg font-bold">Hỗ trợ</h3>
             <p className="text-sm font-semibold">
@@ -382,8 +428,11 @@ const Checkout = () => {
               Hãy gọi ngay cho chúng tôi nếu có vấn đề liên quan đến thanh toán
             </p>
           </div>
+          
         </div>
+        
       </div>
+      
     </div>
   );
 };

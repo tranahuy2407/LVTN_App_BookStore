@@ -39,6 +39,10 @@ const orderSchema = mongoose.Schema({
     type: Number,
     required: true,
   },
+  gift: {
+    type: String,
+    required: true,
+  },
 });
 
 const Order = mongoose.model("Order", orderSchema);

@@ -15,4 +15,13 @@ authorRouter.get("/author/:id", async (req, res) => {
     }
   });
 
+  authorRouter.get("/api/authors", async (req, res) => {
+    try {
+      const authors = await Author.find();
+      res.json(authors);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
 module.exports = authorRouter;

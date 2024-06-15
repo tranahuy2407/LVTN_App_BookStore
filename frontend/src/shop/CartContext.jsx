@@ -27,7 +27,7 @@ export const CartProvider = ({ children }) => {
   const [errorMessage, setErrorMessage] = useState("");
 
   const totalPrice = cartItems.reduce(
-    (total, item) => total + item.price * item.cartQuantity,
+    (total, item) => total + item.promotion_price * item.cartQuantity,
     0
   );
   const clearCart = () => {
@@ -89,7 +89,7 @@ export const CartProvider = ({ children }) => {
             ...item,
             cartQuantity: 1,
             cartId: Date.now(),
-            discountedPrice: item.price,
+            discountedPrice: item.promotion_price,
           },
         ];
       }

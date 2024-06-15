@@ -106,7 +106,7 @@ const Cart = () => {
                       </button>
                     </div>
                   </td>
-                  <td className='py-4 text-center'>{item.price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</td>
+                  <td className='py-4 text-center'>{item.promotion_price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</td>
                   <td className='py-4 text-center'>
                     <button className='bg-red-500 font-semibold text-white py-2 px-4 rounded' onClick={() => removeFromCart(item.cartId)}>
                       Xóa

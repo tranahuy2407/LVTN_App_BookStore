@@ -25,7 +25,7 @@ export function UserContextProvider({ children }) {
         }
 
     }, []);
-    console.log(user)
+    
     const updateUser = (userData) => {
         setUser(userData);
         localStorage.setItem('user', JSON.stringify(userData));
