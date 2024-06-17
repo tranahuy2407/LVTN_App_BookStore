@@ -10,7 +10,6 @@ const User = require("../models/user");
 userRouter.post('/apply-promotion', async (req, res) => {
   try {
     const { code, totalPrice, userId } = req.body;
-    console.log(code,totalPrice, userId);
     const promotion = await Promotion.findOne({ code });
     if (!promotion) {
       return res.status(404).json({ message: 'Mã giảm giá không hợp lệ.' });
@@ -45,7 +44,7 @@ userRouter.post('/apply-promotion', async (req, res) => {
 
 userRouter.post('/api/order', async (req, res) => {
   try {
-    const { cart, totalPrice, address, paymentMethod, discountCode, discountedPrice, phone,userId } = req.body;
+    const { cart, totalPrice, address, paymentMethod, discountCode, discountedPrice, phone, userId, gift } = req.body;
     let products = [];
 
     for (let item of cart) {
@@ -75,15 +74,27 @@ userRouter.post('/api/order', async (req, res) => {
         await promotion.save();
       }
     }
+
+    const orderGift = gift || "Không có quà tặng";
+
+    const orderBooks = cart.map(item => ({
+      book: {
+        ...item.book,
+        promotion_percent: item.book.promotion_percent !== undefined ? item.book.promotion_percent : 0
+      },
+      quantity: item.quantity
+    }));
     const order = new Order({
-      books: cart,
+      books: orderBooks,
       totalPrice: discountedPrice || totalPrice,
       address,
       userId: userId,
       orderedAt: new Date().getTime(),
       paymentMethod,
       phone,
+      gift: orderGift,
     });
+    
     await order.save();
 
     res.status(201).json(order);
@@ -94,13 +105,22 @@ userRouter.post('/api/order', async (req, res) => {
 });
 
 
-userRouter.get("/api/orders/me", auth, async (req, res) => {
+userRouter.get('/api/orders/me/:userId', async (req, res) => {
   try {
-    const orders = await Order.find({ userId: req.user });
+    const userId = req.params.userId; 
+
+    if (!userId) {
+      return res.status(400).json({ error: 'User ID is required' });
+    }
+
+    const orders = await Order.find({ userId });
+
     res.json(orders);
   } catch (e) {
-    console.error("Error processing order:", e);  
-    res.status(500).json({ error: e.message });
+    console.error('Error fetching orders:', e);
+    res.status(500).json({
+      error: 'Đã xảy ra lỗi trong quá trình lấy danh sách đơn hàng.',
+    });
   }
 });
 

@@ -50,7 +50,6 @@ favouriteRouter.get("/favorite/:userId", async (req, res) => {
   // XÓa khỏi ds têu thích
   favouriteRouter.delete("/remove-favorite", async (req, res) => {
     const { userId, bookId } = req.body; 
-    console.log("UserID:", userId, "BookID:", bookId);
 
     try {
         let favourite = await Favourite.findOne({ userId });

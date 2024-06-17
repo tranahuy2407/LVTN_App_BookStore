@@ -3,6 +3,7 @@ import { UserContext } from './UserContext';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import Favourites from '../components/Favourites';
+import OrderMe from '../components/OrderMe';
 
 const AccountPage = () => {
   const [redirect, setRedirect] = useState(null);
@@ -170,6 +171,9 @@ const AccountPage = () => {
        )}
        {user && subpage === 'favoritebooks' && (
         <Favourites/>
+       )}
+        {user && subpage === 'myorders' && (
+        <OrderMe/>
        )}
     </div>
   );

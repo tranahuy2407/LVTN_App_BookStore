@@ -146,6 +146,7 @@ const Checkout = () => {
             images: item.images,
             price: item.price,
             categories: item.categories,
+            promotion_percent: item.promotion_percent || 0,
           },
           quantity: item.cartQuantity,
         })),
@@ -155,7 +156,7 @@ const Checkout = () => {
         discountCode: discountCode ? discountCode.code : null,
         phone,
         userId: userId,
-        gift: gift ? gift.gift : null,
+        gift: gift ? gift.gifts : "Không có quà tặng",
       }),
     });
 

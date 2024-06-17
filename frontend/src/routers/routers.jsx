@@ -14,6 +14,7 @@ import Cart from "../shop/Cart";
 import AccountPage from "../authencation/AccountPage";
 import Checkout from "../shop/Checkout";
 import Invoice from "../shop/Invoice";
+import OrderMe from "../components/OrderMe";
 
 
 const router = createBrowserRouter([
@@ -59,8 +60,17 @@ const router = createBrowserRouter([
             loader: ({params})=>fetch(`http://localhost:5000/api/products/${params.id}`)
         },
         {
+            path:"/order/:id",
+            element: <SingleBook/>,
+            loader: ({params})=>fetch(`http://localhost:5000/api/products/${params.id}`)
+        },
+        {
             path:"/account/:subpage/:action",
             element: <Favourites/>
+        },
+        {
+            path:"/account/:subpage/:action",
+            element: <OrderMe/>
         },
         {
             path:"/cart",

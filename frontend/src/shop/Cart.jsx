@@ -124,7 +124,7 @@ const Cart = () => {
           </table>
           <div className='flex justify-between mt-4'>
             <div>
-              <input type="text" value={discountCodeInput} onChange={handleDiscountCodeChange} placeholder="Nhập mã giảm giá" className="mt-4 p-2 border border-gray-400 rounded" />
+              <input type="text" value={discountCodeInput} onChange={handleDiscountCodeChange} placeholder="Nhập mã giảm giá (nếu có)" className="mt-4 p-2 border border-gray-400 rounded" />
               <button className='bg-blue-500 text-white font-semibold py-2 px-4 rounded mt-2' onClick={applyDiscount}>Áp dụng</button>
             </div>
             <div>

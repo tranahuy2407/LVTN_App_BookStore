@@ -9,6 +9,7 @@ const Favourites = () => {
   const [loading, setLoading] = useState(true);
   const { user } = useContext(UserContext);
   const { addToCart } = useContext(CartContext);
+  
 
   useEffect(() => {
     const fetchFavourites = async () => {
@@ -41,7 +42,6 @@ const Favourites = () => {
         data: { userId: user._id, bookId }
       });
       
-      // Update local state to reflect the change
       setFavourites(favourites.filter(book => book._id !== bookId));
     } catch (error) {
       console.error('Error removing favorite:', error);
@@ -63,7 +63,7 @@ const Favourites = () => {
           <tr>
             <th className="py-2 px-4 border-b text-center">Ảnh</th>
             <th className="py-2 px-4 border-b text-center">Tên</th>
-            <th className="py-2 px-4 border-b text-center">Mô tả</th>
+            <th className="py-2 px-4 border-b text-center">Giá gốc</th>
             <th className="py-2 px-4 border-b text-center">Giá khuyến mãi</th>
             <th className="py-2 px-4 border-b text-center">Còn hàng</th>
             <th className="py-2 px-4 border-b text-center">Hành động</th>
@@ -81,7 +81,7 @@ const Favourites = () => {
                   <img src={book.images} alt={book.name} className="w-12 h-12 object-cover" />
                 </td>
                 <td className="py-2 px-4 border-b">{book.name}</td>
-                <td className="py-2 px-4 border-b">{book.description}</td>
+                <td className="py-2 px-4 border-b">{book.price ? book.price.toLocaleString() + ' VNĐ' : 'Không có'}</td>
                 <td className="py-2 px-4 border-b">{book.promotion_price ? book.promotion_price.toLocaleString() + ' VNĐ' : 'Không có'}</td>
                 <td className="py-2 px-4 border-b">{book.quantity > 0 ? 'Còn hàng' : 'Tạm hết hàng'}</td>
                 <td className="py-2 px-4 border-b flex justify-center items-center space-x-2">
