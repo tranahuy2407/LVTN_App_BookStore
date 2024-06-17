@@ -15,6 +15,7 @@ import AccountPage from "../authencation/AccountPage";
 import Checkout from "../shop/Checkout";
 import Invoice from "../shop/Invoice";
 import OrderMe from "../components/OrderMe";
+import Products from "../admin/components/Products";
 
 
 const router = createBrowserRouter([
@@ -87,16 +88,17 @@ const router = createBrowserRouter([
         {
             path:"/admin/dashboard",
             element: <DashBoardLayout/>,
-            children: [ 
+            children: [
                 {
                     path:"/admin/dashboard",
                     element: <DashBoard/>
                 },
-               
             ]
         }
     ]
-  },
+    
+  }
 ]);
+
 
 export default router;
