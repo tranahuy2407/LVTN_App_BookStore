@@ -18,13 +18,13 @@ export const DASHBOARD_SIDEBAR_LINKS = [
 	},
 	{
 		key: 'products',
-		label: 'Products',
-		path: '/products',
+		label: 'Sản phẩm',
+		path: 'products',
 		icon: <HiOutlineCube />
 	},
 	{
 		key: 'orders',
-		label: 'Orders',
+		label: 'Xử lý đơn hàng',
 		path: '/orders',
 		icon: <HiOutlineShoppingCart />
 	},

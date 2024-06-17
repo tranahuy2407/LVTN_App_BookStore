@@ -75,23 +75,24 @@ const router = createBrowserRouter([
             path:"/invoice",
             element: <Invoice/>
         },
-        {
-            path:"/product",
-            element: <Products/>
-        },
         
     ]
   },
   {
-    path:"/admin/dashboard",
+    path:"/",
     element: <DashBoardLayout/>,
     children: [
         {
             path:"/admin/dashboard",
             element: <DashBoard/>
         },
+        {
+            path:"/products",
+            element: <Products/>
+        },
         
     ]
+    
   }
 ]);
 

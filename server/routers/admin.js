@@ -3,6 +3,40 @@ const adminRouter = express.Router();
 const admin = require("../middlewares/admin");
 const { Product } = require("../models/book");
 const Order = require("../models/order");
+const Admin = require("../models/admin.js")
+
+//Đăng nhập admin
+adminRouter.post("/api/signin", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const admin = await Admin.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ msg: "Email này không tồn tại!" });
+    }
+
+    const isMatch = await bcryptjs.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ msg: "Mật khẩu không đúng!" });
+    }
+
+    jwt.sign({ 
+      email: admin.email, 
+      id: admin._id, 
+     }, jwtSecret, {}, async (err, token) => {
+      if (err) {
+        console.error("JWT error:", err);
+        return res.status(500).json({ error: "JWT error" });
+      }
+
+      admin.token = token;
+      await admin.save();
+      res.cookie('token', token).json(admin);
+    });
+  } catch (e) {
+    console.error("Sign-in error:", e.message);
+    res.status(500).json({ error: e.message });
+  }
+});
 
 // Add product
 adminRouter.post("/admin/add-product", admin, async (req, res) => {
