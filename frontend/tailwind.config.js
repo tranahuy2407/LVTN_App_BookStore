@@ -1,4 +1,5 @@
 const flowbite = require("flowbite-react/tailwind");
+
 /** @type {import('tailwindcss').Config} */
 
 export default {
@@ -14,5 +15,8 @@ export default {
       },
     },
   },
-  plugins: [flowbite.plugin()],
+  plugins: [flowbite.plugin(),
+    require("daisyui"),
+  ],
+
 };

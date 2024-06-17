@@ -28,6 +28,10 @@ try {
             type: Number,
             required: true
         },
+        conditional: {
+            type: Number,
+            required: true
+        },
         usage_per_user: {
             type: [String], 
             default: []

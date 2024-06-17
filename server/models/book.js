@@ -20,13 +20,20 @@ const booksSchema = mongoose.Schema({
     type: Number,
     required: true,
   },
+  promotion_percent: {
+    type: Number,
+    required: true,
+  },
   price: {
     type: Number,
     required: true,
   },
-  discount_price: {
+  promotion_price: {
     type: Number,
     required: true,
+    default: function() {
+      return this.price; 
+    }
   },
   categories: [{  
     type: mongoose.Schema.Types.ObjectId,

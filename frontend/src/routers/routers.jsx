@@ -60,7 +60,7 @@ const router = createBrowserRouter([
             loader: ({params})=>fetch(`http://localhost:5000/api/products/${params.id}`)
         },
         {
-            path:"/favourites",
+            path:"/account/:subpage/:action",
             element: <Favourites/>
         },
         {
@@ -75,22 +75,16 @@ const router = createBrowserRouter([
             path:"/invoice",
             element: <Invoice/>
         },
-        
-    ]
-  },
-  {
-    path:"/",
-    element: <DashBoardLayout/>,
-    children: [
         {
             path:"/admin/dashboard",
-            element: <DashBoard/>
-        },
-        {
-            path:"/products",
-            element: <Products/>
-        },
-        
+            element: <DashBoardLayout/>,
+            children: [
+                {
+                    path:"/admin/dashboard",
+                    element: <DashBoard/>
+                },
+            ]
+        }
     ]
     
   }

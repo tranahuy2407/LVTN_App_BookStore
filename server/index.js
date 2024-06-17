@@ -6,7 +6,9 @@ const authRouter = require("./routers/auth");
 const bookRouter = require("./routers/book");
 const userRouter = require("./routers/user");
 const categoryRouter = require("./routers/category");
-
+const authorRouter = require("./routers/author");
+const promotionRouter = require("./routers/promotion");
+const favouriteRouter = require("./routers/favourite");
 
 const PORT = process.env.PORT || 5000;
 const app = express();
@@ -25,6 +27,10 @@ app.use(adminRouter);
 app.use(bookRouter);
 app.use(userRouter);
 app.use(categoryRouter);
+app.use(authorRouter);
+app.use(promotionRouter);
+app.use(favouriteRouter);
+
 
 
 mongoose

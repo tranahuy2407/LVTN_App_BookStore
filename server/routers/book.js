@@ -2,7 +2,7 @@ const express = require("express");
 const bookRouter = express.Router();
 const auth = require("../middlewares/auth");
 const { Book } = require("../models/book");
-const { Category } = require("../models/category");
+const Category = require('../models/Category');
 
 // Endpoint lấy tất cả
 bookRouter.get("/api/products", async (req, res) => {
@@ -85,26 +85,24 @@ bookRouter.get("/api/best-sellers", auth, async (req, res) => {
   }
 });
 
-bookRouter.get(
-  "/api/product-categories/:productId",
-  auth,
-  async (req, res) => {
-    try {
-      const productId = req.params.productId;
-      const product = await Book.findById(productId);
+bookRouter.get("/api/product-categories/:productId", async (req, res) => {
+  try {
+    const productId = req.params.productId;
+    const product = await Book.findById(productId);
 
-      if (!product) {
-        return res.status(404).json({ error: "Product not found" });
-      }
-
-      const categoryIds = product.categories;
-      const categories = await Category.find({ _id: { $in: categoryIds } });
-      const categoryNames = categories.map((category) => category.name);
-      res.json(categoryNames);
-    } catch (e) {
-      res.status(500).json({ error: e.message });
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" });
     }
+
+    const categoryIds = product.categories;
+    const categories = await Category.find({ _id: { $in: categoryIds } });
+    const categoryNames = categories.map(category => ({ _id: category._id, name: category.name }));
+
+    res.json(categoryNames);
+  } catch (error) {
+    console.error("Error fetching categories:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
   }
-);
+});
 
 module.exports =bookRouter;

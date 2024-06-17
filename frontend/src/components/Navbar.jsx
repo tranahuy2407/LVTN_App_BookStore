@@ -34,7 +34,6 @@ const Navbar = () => {
     { link: 'Cửa hàng', path: '/shop' },
     { link: 'Giới thiệu', path: '/about' },
     { link: 'Tin tức', path: '/news' },
-    { link: 'Danh sách yêu thích', path: '/favourites' },
   ];
 
   return (

@@ -34,7 +34,7 @@ const Cart = () => {
 
   const applyDiscount = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/apply-promotion', { code: discountCodeInput});
+      const response = await axios.post('http://localhost:5000/apply-promotion', { code: discountCodeInput, totalPrice: totalPrice, userId: user._id});
       if (response.status === 200) {
         const promotion = response.data.promotion;
         setSuccessMessage(response.data.message);
@@ -47,8 +47,13 @@ const Cart = () => {
         });
       }
     } catch (error) {
-      setErrorMessage(error.response.data.message);
-      setSuccessMessage('');
+      if (error.response.status === 400 && error.response.data.msg === 'Bạn đã sử dụng mã giảm giá này rồi!') {
+        setErrorMessage(error.response.data.msg);
+        setSuccessMessage('');
+      } else {
+        setErrorMessage('Đã xảy ra lỗi khi áp dụng mã giảm giá.');
+        setSuccessMessage('');
+      }
       setDiscountApplied(false);
     }
   };
@@ -59,7 +64,7 @@ const Cart = () => {
     setErrorMessage('');
     setDiscountApplied(false);
   };
-  console.log(discountCode);
+
   return (
     <div className='mt-28 px-4 lg:px-24'>
       <h2 className='text-5xl font-bold text-center '>Giỏ hàng</h2>
@@ -101,7 +106,13 @@ const Cart = () => {
                       </button>
                     </div>
                   </td>
-                  <td className='py-4 text-center'>{item.price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</td>
+                    <td className='py-4 text-center'>
+                    {typeof item.promotion_price === 'number' ? (
+                      item.promotion_price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })
+                    ) : (
+                      'Giá không có sẵn'  
+                    )}
+                  </td>
                   <td className='py-4 text-center'>
                     <button className='bg-red-500 font-semibold text-white py-2 px-4 rounded' onClick={() => removeFromCart(item.cartId)}>
                       Xóa

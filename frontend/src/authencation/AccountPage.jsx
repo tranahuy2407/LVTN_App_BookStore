@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { UserContext } from './UserContext';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import axios from 'axios';
+import Favourites from '../components/Favourites';
 
 const AccountPage = () => {
   const [redirect, setRedirect] = useState(null);
@@ -166,7 +167,10 @@ const AccountPage = () => {
           <br />
           <button onClick={dangXuat} className="max-w-sm mt-2" id="login">Đăng xuất</button>
         </div>
-      )}
+       )}
+       {user && subpage === 'favoritebooks' && (
+        <Favourites/>
+       )}
     </div>
   );
 };
