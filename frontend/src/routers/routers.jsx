@@ -14,6 +14,7 @@ import Cart from "../shop/Cart";
 import AccountPage from "../authencation/AccountPage";
 import Checkout from "../shop/Checkout";
 import Invoice from "../shop/Invoice";
+import Products from "../admin/components/Products";
 
 
 const router = createBrowserRouter([
@@ -75,17 +76,24 @@ const router = createBrowserRouter([
             element: <Invoice/>
         },
         {
-            path:"/admin/dashboard",
-            element: <DashBoardLayout/>,
-            children: [
-                {
-                    path:"/admin/dashboard",
-                    element: <DashBoard/>
-                },
-            ]
-        }
+            path:"/product",
+            element: <Products/>
+        },
+        
     ]
   },
+  {
+    path:"/admin/dashboard",
+    element: <DashBoardLayout/>,
+    children: [
+        {
+            path:"/admin/dashboard",
+            element: <DashBoard/>
+        },
+        
+    ]
+  }
 ]);
+
 
 export default router;

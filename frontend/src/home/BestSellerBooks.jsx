@@ -10,6 +10,7 @@ const BestSellerBooks = () => {
   return (
     <div>
       <BookCard books ={books} headline ="Sách Bán Chạy"/>
+      
     </div>
   )
 }

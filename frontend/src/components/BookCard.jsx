@@ -62,6 +62,11 @@ const BookCard = ({headline, books}) => {
                     <div>
                         <p>{book.price} VNĐ</p>
                     </div>
+                    
+                    <div> 
+                      <p>{book.discount_price} VNĐ</p>
+                    </div>
+
                 </Link>
             </SwiperSlide>)
         }

@@ -24,6 +24,10 @@ const booksSchema = mongoose.Schema({
     type: Number,
     required: true,
   },
+  discount_price: {
+    type: Number,
+    required: true,
+  },
   categories: [{  
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Category'
